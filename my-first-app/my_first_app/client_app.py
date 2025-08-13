@@ -15,6 +15,7 @@ class FlowerClient(NumPyClient):
         self.valloader = valloader
         self.local_epochs = local_epochs
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        print(f"Training on {self.device}")
         self.net.to(self.device)
 
     def fit(self, parameters, config):
