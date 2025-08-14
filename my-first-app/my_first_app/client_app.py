@@ -19,6 +19,7 @@ class FlowerClient(NumPyClient):
         self.net.to(self.device)
 
     def fit(self, parameters, config):
+        print(config)
         set_weights(self.net, parameters)
         train_loss = train(
             self.net,
