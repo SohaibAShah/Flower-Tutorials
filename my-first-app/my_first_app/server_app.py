@@ -1,10 +1,29 @@
 """my-first-app: A Flower / PyTorch app."""
 
+from operator import ge
 from typing import List, Tuple
 from flwr.common import Context, ndarrays_to_parameters, Metrics
 from flwr.server import ServerApp, ServerAppComponents, ServerConfig
 from flwr.server.strategy import FedAvg
-from my_first_app.task import Net, get_weights
+from datasets import load_dataset
+from torch.utils.data import DataLoader
+
+import torch
+from my_first_app.task import Net, get_weights, set_weights, test, train, get_transforms
+
+def get_evaluate_fn(testloader, device):
+    """Return a callback that evaluates the global model"""
+
+    def evaluate(server_round, parameters_ndarrays, config):
+        """Evaluate global model using provided centralized test set"""
+        net = Net()
+        set_weights(net, parameters_ndarrays)
+        net.to(device)
+        loss, accuracy = test(net, testloader, device)
+        return loss, {"cen_accuracy": accuracy}
+
+    return evaluate
+
 
 def weighted_average(metrics: List[Tuple[int, Metrics]]) -> Metrics:
     """A function that aggregates metrics"""
@@ -34,6 +53,11 @@ def server_fn(context: Context):
     ndarrays = get_weights(Net())
     parameters = ndarrays_to_parameters(ndarrays)
 
+    #Load global test set
+    testset = load_dataset("zalando-datasets/fashion_mnist")["test"]
+
+    testloader = DataLoader(testset.with_transform(get_transforms()), batch_size=32)
+
     # Define strategy
     strategy = FedAvg(
         fraction_fit=fraction_fit,
@@ -42,6 +66,10 @@ def server_fn(context: Context):
         initial_parameters=parameters,
         evaluate_metrics_aggregation_fn=weighted_average,
         on_fit_config_fn=on_fit_config,
+        evaluate_fn=get_evaluate_fn(
+            testloader,
+            device="cuda:0"
+        ),
     )
     config = ServerConfig(num_rounds=num_rounds)
 
