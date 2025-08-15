@@ -8,6 +8,8 @@ from flwr.server.strategy import FedAvg
 from typing import List, Tuple
 from my_first_app.task import Net, set_weights
 import torch, json
+import wandb
+from datetime import datetime
 
 
 class CustomFedAvg(FedAvg):
@@ -16,6 +18,17 @@ class CustomFedAvg(FedAvg):
         super().__init__(*args, **kwargs)
 
         self.results_to_save = {}
+
+        # Start a new wandb run to track this script.
+        name = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        wandb.init(
+            # Set the wandb entity where your project will be logged (generally your team name).
+            #entity="my-awesome-team-name",
+            # Set the wandb project where this run will be logged.
+            project="flower-simulation-tutorial",
+
+            name = f"custom-strategy-{name}",
+        )
 
     def aggregate_fit(self, 
                       server_round: int,
@@ -54,5 +67,8 @@ class CustomFedAvg(FedAvg):
         # Save metrics as json
         with open("results.json", "w") as f:
             json.dump(self.results_to_save, f, indent=4)
+
+        #Log to w&b
+        wandb.log(my_results, step=server_round)
 
         return loss, metrics

@@ -1,0 +1,47 @@
+{
+  "os": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "python": "CPython 3.10.0",
+  "startedAt": "2025-08-15T15:47:31.570496Z",
+  "args": [
+    "--app",
+    ".",
+    "--num-supernodes",
+    "10",
+    "--backend-config",
+    "{\"client-resources\": {\"num-cpus\": 1, \"num-gpus\": 0.25}}",
+    "--run-config",
+    "num-server-rounds=5"
+  ],
+  "program": "/home/syed/miniconda3/envs/flwr/bin/flower-simulation",
+  "git": {
+    "remote": "https://github.com/SohaibAShah/Flower-Tutorials.git",
+    "commit": "3200ec301fe11c9e07292144649e4f7b26c30e30"
+  },
+  "email": "mail2shahg@gmail.com",
+  "root": "/home/syed/PhD/Flower-Tutorials/my-first-app",
+  "host": "TUF",
+  "executable": "/home/syed/miniconda3/envs/flwr/bin/python3.10",
+  "cpu_count": 8,
+  "cpu_count_logical": 16,
+  "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU",
+  "gpu_count": 1,
+  "disk": {
+    "/": {
+      "total": "1081101176832",
+      "used": "397564575744"
+    }
+  },
+  "memory": {
+    "total": "24603979776"
+  },
+  "gpu_nvidia": [
+    {
+      "name": "NVIDIA GeForce RTX 4050 Laptop GPU",
+      "memoryTotal": "6439305216",
+      "architecture": "Ada",
+      "uuid": "GPU-90cc744d-4b09-d5cd-25bc-1cdd32a36c95"
+    }
+  ],
+  "cudaVersion": "12.9",
+  "writerId": "tcsjwjcqv0y95lk0cvqesriw3p7y1wj7"
+}
