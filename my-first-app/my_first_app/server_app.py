@@ -7,6 +7,8 @@ from flwr.server import ServerApp, ServerAppComponents, ServerConfig
 from flwr.server.strategy import FedAvg
 from datasets import load_dataset
 from torch.utils.data import DataLoader
+from my_first_app.task import Net, get_weights, set_weights
+from my_first_app.My_strategy import CustomFedAvg
 
 import torch, json
 from my_first_app.task import Net, get_weights, set_weights, test, train, get_transforms
@@ -70,7 +72,7 @@ def server_fn(context: Context):
     testloader = DataLoader(testset.with_transform(get_transforms()), batch_size=32)
 
     # Define strategy
-    strategy = FedAvg(
+    strategy = CustomFedAvg(
         fraction_fit=fraction_fit,
         fraction_evaluate=1.0,
         min_available_clients=2,
