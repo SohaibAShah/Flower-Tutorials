@@ -1,7 +1,7 @@
 """my-first-app: A Flower / PyTorch app."""
 
-import torch
-
+import torch, json
+from random import random
 from flwr.client import ClientApp, NumPyClient
 from flwr.common import Context
 from my_first_app.task import Net, get_weights, load_data, set_weights, test, train
@@ -18,7 +18,6 @@ class FlowerClient(NumPyClient):
         self.net.to(self.device)
 
     def fit(self, parameters, config):
-        print(config)
         set_weights(self.net, parameters)
         train_loss = train(
             self.net,
@@ -26,10 +25,13 @@ class FlowerClient(NumPyClient):
             self.local_epochs,
             self.device,
         )
+
+        complex_metric = {"a": 123, "b": random(), "my_list": [random() for _ in range(5)]}
+        complex_metric_str = json.dumps(complex_metric)
         return (
             get_weights(self.net),
             len(self.trainloader.dataset),
-            {"train_loss": train_loss},
+            {"train_loss": train_loss, "random_num": random(), "my_metric": complex_metric_str},
         )
 
     def evaluate(self, parameters, config):

@@ -8,7 +8,7 @@ from flwr.server.strategy import FedAvg
 from datasets import load_dataset
 from torch.utils.data import DataLoader
 
-import torch
+import torch, json
 from my_first_app.task import Net, get_weights, set_weights, test, train, get_transforms
 
 def get_evaluate_fn(testloader, device):
@@ -24,6 +24,17 @@ def get_evaluate_fn(testloader, device):
 
     return evaluate
 
+def handle_fit_metrics(metrics: List[Tuple[int, Metrics]]) -> Metrics:
+    """Handle metrics from fit method in clients"""
+
+    b_values = []
+    for _, m in metrics:
+        my_metric_str = m["my_metric"]
+        my_metric = json.loads(my_metric_str)
+        b_values.append(my_metric["b"])
+
+    return {"max_b": max(b_values) if b_values else 0
+}
 
 def weighted_average(metrics: List[Tuple[int, Metrics]]) -> Metrics:
     """A function that aggregates metrics"""
@@ -65,6 +76,7 @@ def server_fn(context: Context):
         min_available_clients=2,
         initial_parameters=parameters,
         evaluate_metrics_aggregation_fn=weighted_average,
+        fit_metrics_aggregation_fn=handle_fit_metrics,
         on_fit_config_fn=on_fit_config,
         evaluate_fn=get_evaluate_fn(
             testloader,
