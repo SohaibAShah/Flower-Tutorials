@@ -8,7 +8,7 @@ from flwr.server.strategy import FedAvg
 from typing import List, Tuple
 from my_first_app.task import Net, set_weights
 import torch, json
-import wandb
+import wandb, os
 from datetime import datetime
 
 
@@ -47,7 +47,12 @@ class CustomFedAvg(FedAvg):
         model = Net()
         set_weights(model, ndarrays)
         # Save global model in the standard PyTorch way
-        torch.save(model.state_dict(), f"global_model_round_{server_round}.pth")
+        # Ensure global_model directory exists
+        os.makedirs("global_model", exist_ok=True)
+        
+        # Save global model in the global_model folder
+        model_path = os.path.join("global_model", f"global_model_round_{server_round}.pth")
+        torch.save(model.state_dict(), model_path)
 
         return parameters_aggredated, metrices_aggregated
     
