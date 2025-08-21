@@ -3,7 +3,7 @@
 from flwr.common import Context, ndarrays_to_parameters
 from flwr.server import ServerApp, ServerAppComponents, ServerConfig
 from flwr.server.strategy import FedAvg
-from up_fall_app.task import Net, get_weights
+from up_fall_app.task import SensorModel, get_weights, set_weights
 
 
 def server_fn(context: Context):
